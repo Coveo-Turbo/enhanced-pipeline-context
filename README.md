@@ -2,6 +2,14 @@
 
 Disclaimer: This component was built by the community at large and is not an official Coveo JSUI Component. Use this component at your own risk.
 
+This component is used to pass values inside the Coveo QueryBuilder's context. It accepts a context value in a dictionary format, for example, passing:
+
+context: { 
+  data: 12345
+}
+
+Will allow you to access context.data from the Coveo Cloud Platform.
+
 ## Getting Started
 
 1. Install the component into your project.
