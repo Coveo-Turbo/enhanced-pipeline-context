@@ -7,13 +7,17 @@ import { lazyComponent } from "@coveops/turbo-core";
 
 export interface IEnhancedPipelineContextOptions {
   context: any;
+  setCustomDataOnClickEvent: boolean;
+  setCustomDataOnCustomEvent: boolean;
 }
 
 @lazyComponent
 export class EnhancedPipelineContext extends Component {
   static ID = "EnhancedPipelineContext";
   static options: IEnhancedPipelineContextOptions = {
-    context: ComponentOptions.buildJsonObjectOption(),
+    context: ComponentOptions.buildJsonOption(),
+    setCustomDataOnClickEvent: Coveo.ComponentOptions.buildBooleanOption({ defaultValue: false }),
+    setCustomDataOnCustomEvent: Coveo.ComponentOptions.buildBooleanOption({ defaultValue: false })
   };
 
   constructor(
@@ -32,6 +36,12 @@ export class EnhancedPipelineContext extends Component {
       Coveo.InitializationEvents.afterComponentsInitialization,
       () => this.handleAfterComponentsInit()
     );
+
+    this.bind.onRootElement(
+      Coveo.AnalyticsEvents.changeAnalyticsCustomData,
+      (args: Coveo.IChangeAnalyticsCustomDataEventArgs) => this.handleChangeAnalyticsCustomData(args)
+    );
+
   }
 
   /**
@@ -47,4 +57,24 @@ export class EnhancedPipelineContext extends Component {
 
     pipelineContext.setContext(this.options.context);
   }
+
+  /**
+   * Change Analytics Custom Data
+   */
+  private handleChangeAnalyticsCustomData(args: Coveo.IChangeAnalyticsCustomDataEventArgs) {
+
+    if ((this.options.setCustomDataOnClickEvent && args.type === 'ClickEvent') || (this.options.setCustomDataOnCustomEvent && args.type === 'CustomEvent')) {
+      if (args['resultData']) {
+        args.metaObject = this.merge(args.metaObject, this.options.context);
+      }
+    }
+  }
+
+  private merge(dest: any, src: any) {
+    for (var key in src) {
+      dest['context_' + key] = src[key];
+    }
+    return dest;
+  }
+
 }
