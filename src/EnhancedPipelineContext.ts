@@ -64,9 +64,7 @@ export class EnhancedPipelineContext extends Component {
   private handleChangeAnalyticsCustomData(args: Coveo.IChangeAnalyticsCustomDataEventArgs) {
 
     if ((this.options.setCustomDataOnClickEvent && args.type === 'ClickEvent') || (this.options.setCustomDataOnCustomEvent && args.type === 'CustomEvent')) {
-      if (args['resultData']) {
-        args.metaObject = this.merge(args.metaObject, this.options.context);
-      }
+      args.metaObject = this.merge(args.metaObject, this.options.context);
     }
   }
 
